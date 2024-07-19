@@ -1,7 +1,50 @@
 from tkinter import *
 from tkinter import ttk
+import mysql.connector
+from tkinter import messagebox
+
+def con_bd():
+   global cs, con
+   con = mysql.connector.connect(host = "localhost",user="root", password="",database="register")
+   cs = con.cursor()
+
+
 
 def mainFormTeacher():
+    def clearFrom():
+       ent_id_teacher.delete(0,END)
+       ent_fname.delete(0,END)
+       ent_gmail.delete(0,END)
+       ent_lname.delete(0,END)
+       ent_major.delete(0,END)
+       ent_tel.delete(0,END)
+
+
+       
+    def insert_data():
+      if ent_id_teacher.get() == "" or ent_fname.get() == "" or ent_gmail.get() == "" or ent_lname.get() == "" or ent_major.get() == "" or ent_tel.get() == "" :
+          messagebox.showwaring("waring", "Please fill out all fields")
+      else:
+          con_bd()
+          cs = con.cursor()
+          sql = "INSERT INTO tb_teacher (id_teacher, f_name_teacher, l_name_teacher, major, email, tel) VALUES (%s, %s, %s, %s, %s, %s)"
+          val = (
+            str(ent_id_teacher.get()),
+            str(ent_fname.get()),
+            str(ent_lname.get()),
+            str(ent_gmail.get()),
+            str(ent_major.get()),
+            str(ent_tel.get()),
+            )
+      cs.execute(sql,val)
+      con.commit()
+      con.close()
+      cs.close()
+      clearFrom()
+
+      messagebox.showwarning("Warning", "Data saved successfully")
+
+
     root = Tk()
     root.title("ระบบทะเบียนอาจารย์")
     root.geometry("900x620")
@@ -42,7 +85,7 @@ def mainFormTeacher():
     ent_tel.place(height=30, width=180, x=120, y=230)
     
     
-    btn_save =ttk.Button(root,text= "Save")
+    btn_save =ttk.Button(root,text= "Save",command=insert_data)
     btn_save.place(height=50, width=150, x= 600, y= 20)
     btn_edit =ttk.Button(root,text= "Edit")
     btn_edit.place(height=50, width=150, x= 600, y= 75) 
