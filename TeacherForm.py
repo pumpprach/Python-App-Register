@@ -11,7 +11,7 @@ def con_bd():
 
 
 def mainFormTeacher():
-    def clearFrom():
+  def clearFrom():
        ent_id_teacher.delete(0,END)
        ent_fname.delete(0,END)
        ent_gmail.delete(0,END)
@@ -21,29 +21,72 @@ def mainFormTeacher():
 
 
        
-    def insert_data():
-      if ent_id_teacher.get() == "" or ent_fname.get() == "" or ent_gmail.get() == "" or ent_lname.get() == "" or ent_major.get() == "" or ent_tel.get() == "" :
-          messagebox.showwaring("waring", "Please fill out all fields")
-      else:
-          con_bd()
-          cs = con.cursor()
-          sql = "INSERT INTO tb_teacher (id_teacher, f_name_teacher, l_name_teacher, major, email, tel) VALUES (%s, %s, %s, %s, %s, %s)"
-          val = (
-            str(ent_id_teacher.get()),
-            str(ent_fname.get()),
-            str(ent_lname.get()),
-            str(ent_gmail.get()),
-            str(ent_major.get()),
-            str(ent_tel.get()),
-            )
-      cs.execute(sql,val)
-      con.commit()
+  def insert_data():
+      try:
+        if ent_id_teacher.get() == "" or ent_fname.get() == "" or ent_gmail.get() == "" or ent_lname.get() == "" or ent_major.get() == "" or ent_tel.get() == "" :
+            messagebox.showwaring("waring", "Please fill out all fields")
+        else:
+            con_db()
+            cs = con.cursor()
+            sql = "INSERT INTO tb_teacher (id_teacher, f_name_teacher, l_name_teacher, major, email, tel) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (
+              str(ent_id_teacher.get()),
+              str(ent_fname.get()),
+              str(ent_lname.get()),
+              str(ent_gmail.get()),
+              str(ent_major.get()),
+              str(ent_tel.get()),
+              )
+        cs.execute(sql,val)
+        con.commit()
+        con.close()
+        cs.close()
+        clearFrom()
+        insertDataTreeview()
+
+
+        messagebox.showwarning("Warning", "Data saved successfully")
+
+      except mysql.connector.Error as err:
+         messagebox.showerror("error", f"Error:{err}")
+
+  def selectTreeView(event):
+
+    clearFrom()
+    item = view.selection()
+    for i in item:
+      ent_id_teacher.insert("",view.item(i, "values")[0])
+      ent_fname.insert("",view.item(i, "values")[1])
+      ent_lname.insert("",view.item(i, "values")[2])
+      ent_major.insert("",view.item(i, "values")[3])
+      ent_gmail.insert("",view.item(i, "values")[4])
+      ent_tel.insert("",view.item(i, "values")[5])
+
+  def update_data():
+    if not view.selection():
+      messagebox.showinfo("warning", "คุณยังไม่ได้เลือกข้อมูล")
+    else:
+      con_db()
+      cs.execute("UPDATE tb_teacher set id_teacher = %s, f_name_teacher = %s, l_name_teacher, major = %s, email = %s, tel = %s" (str(ent_id_teacher.get()), str(ent_fname.get()), str(ent_lname.get()), str(ent_major.get()), str(ent_email.get()), str(ent_tel.get())))
+
+      msgBox = messagebox.askquestion("Information", "ต้องการเเก้ไขข้อมูลมั้ย")
+      if msgBox == "yes":
+        con.commit()
       con.close()
       cs.close()
       clearFrom()
+      insertDataTreeview()
 
-      messagebox.showwarning("Warning", "Data saved successfully")
-
+  def insertDataTreeview():
+      for c in view.get.children():
+        view.delete(c)
+      con_bd()
+      cs.execute("SELECT * FROM tb_teacher")
+      data = cs.fetchall()
+      for d in data:
+        view.insert("", "END", values=d)
+      con.close()
+      cs.close()
 
     root = Tk()
     root.title("ระบบทะเบียนอาจารย์")
@@ -87,7 +130,7 @@ def mainFormTeacher():
     
     btn_save =ttk.Button(root,text= "Save",command=insert_data)
     btn_save.place(height=50, width=150, x= 600, y= 20)
-    btn_edit =ttk.Button(root,text= "Edit")
+    btn_edit =ttk.Button(root,text= "Edit", command=update_data)
     btn_edit.place(height=50, width=150, x= 600, y= 75) 
     btn_delete =ttk.Button(root,text= "Delete")
     btn_delete.place(height=50, width=150, x= 600, y= 130)     
@@ -120,7 +163,10 @@ def mainFormTeacher():
     view.heading("#4", text="Major")
     view.heading("#5", text="Email")
     view.heading("#6", text="Tel")     
-    root.mainloop()
-    
+
+    view.bind('<ButtonRelease>', selectTreeView)
+    insertDataTreeview()
+
+root.mainloop()
 if __name__ == "__main__":
   mainFormTeacher()
