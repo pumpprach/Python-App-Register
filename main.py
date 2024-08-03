@@ -1,9 +1,10 @@
 from tkinter import *
 import TeacherForm
+import StudentForm
 
 def main():
     root = Tk()
-    root.title("ระบบลงทะเบียน")
+    root.title("Registration system")
     root.geometry("300x350")
     
     Teacherimg = PhotoImage(file="C:\\Users\\User\\Pictures\\python App\\img\\teacher.png")
@@ -13,7 +14,7 @@ def main():
     Exitimg = PhotoImage(file= "C:\\Users\\User\\Pictures\\python App\\img\\exit.png")
 
     btn1 = Button(root, text="Teacher", image=Teacherimg, compound="left", width=180, height=35, command=TeacherForm.mainFormTeacher)
-    btn2 = Button(root, text="Student", image= Studentimg, compound="left", width=180,height=35)
+    btn2 = Button(root, text="Student", image= Studentimg, compound="left", width=180,height=35, command=StudentForm.mainFormStudent)
     btn3 = Button(root, text="Subject", image= Bookimg, compound="left", width=180,height=35)
     btn4 = Button(root, text="Register", image= Clickimg, compound="left",width=180,height=35)
     btn5 = Button(root, text="Exit", image= Exitimg, compound="left", width=180,height=35)
