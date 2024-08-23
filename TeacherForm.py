@@ -1,3 +1,4 @@
+
 from tkinter import*
 from tkinter import ttk
 import mysql.connector
@@ -8,7 +9,12 @@ def con_db():
     cs = con.cursor()
 
 
-def mainFormTeacher():
+def mainFormTeacher(root):
+    def ShowmainForm():
+        root.destroy()
+        root.deiconify()
+
+
     def clearFrom():
         ent_id_teacher.delete(0,END)
         ent_fname.delete(0,END)
@@ -98,7 +104,7 @@ def mainFormTeacher():
             
     
     
-    root = Tk()
+    root = Toplevel()
     root.title("Teacher Registration System")
     root.geometry("900x620")
     #การสร้าง labelFrame
@@ -141,7 +147,7 @@ def mainFormTeacher():
     btn_delete.place(height=50, width=150,x=600,y=130)
     btn_cancel = ttk.Button(root,text= "Cancel",command=clearFrom)
     btn_cancel.place(height=50, width=150,x=600,y=185)
-    btn_exit = ttk.Button(root,text= "Exit",command=quit)
+    btn_exit = ttk.Button(root,text= "Exit",command=ShowmainForm)
     btn_exit.place(height=50, width=150,x=600,y=240)
     
     viewTrc = ttk.Treeview(root,columns=("id","fName","lName","Majors","Email","Tel"),show="headings")
